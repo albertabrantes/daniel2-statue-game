@@ -52,6 +52,15 @@ header .brand{font-family:Cinzel,serif;font-weight:700;color:var(--gold2);font-s
 .level b{font-family:Cinzel,serif;font-size:19px;display:block;margin-bottom:4px}
 .level span{font-size:15px;line-height:1.25;display:block;color:#5a4426}
 .level[aria-pressed="true"]{border-color:#7a4e10;background:linear-gradient(180deg,#f9e3a0,#e9c56b);box-shadow:0 0 0 3px rgba(227,181,74,.5)}
+.gstyle{border:2px solid #b08a4a;background:#fbf3df;color:var(--ink);border-radius:14px;padding:14px 10px;text-align:left;min-height:96px}
+.gstyle b{font-family:Cinzel,serif;font-size:19px;display:block;margin-bottom:4px}
+.gstyle span{font-size:15px;line-height:1.25;display:block;color:#5a4426}
+.gstyle[aria-pressed="true"]{border-color:#7a4e10;background:linear-gradient(180deg,#f9e3a0,#e9c56b);box-shadow:0 0 0 3px rgba(227,181,74,.5)}
+.finishwrap{text-align:center;margin:12px 0 0}
+.savednote{background:#f3ead2;border:1px dashed #8a6a36;border-radius:12px;padding:12px;margin:8px 0;color:#3b2a12}
+.savednote b{display:block;font-family:Cinzel,serif;font-size:18px;margin-bottom:6px}
+.legend button.saved::before{content:"● ";color:#e3b54a}
+.revealhdr{text-align:center;font-family:Cinzel,serif;color:#7a4e10;font-size:14px;margin:0 0 4px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 26px;font-size:19px;font-weight:600;min-height:52px;
   font-family:Cinzel,serif;letter-spacing:.05em}
 .btn-gold{background:linear-gradient(180deg,#f7dc86,#d29f2c 60%,#a8761a);color:#2b1a05;box-shadow:0 4px 0 #6d4a0d,0 8px 20px rgba(0,0,0,.4)}
@@ -166,6 +175,11 @@ footer{text-align:center;color:#7d6848;font-size:13px;padding:18px 10px 28px}
         <button type="button" class="level" data-level="easy" aria-pressed="true"><b data-i18n="easy">Fácil</b><span data-i18n="easyDesc">Escolha o metal e o reino entre as opções.</span></button>
         <button type="button" class="level" data-level="hard" aria-pressed="false"><b data-i18n="hard">Difícil</b><span data-i18n="hardDesc">Escolha o metal e digite o nome do reino. Pontos ×1,5!</span></button>
       </div>
+      <h3 class="cinzel" data-i18n="styleTitle" style="margin-top:14px">Estilo de jogo</h3>
+      <div class="levels">
+        <button type="button" class="gstyle" data-style="normal" aria-pressed="true"><b data-i18n="normal">Normal</b><span data-i18n="normalDesc">Veja se acertou e o versículo depois de cada parte.</span></button>
+        <button type="button" class="gstyle" data-style="challenge" aria-pressed="false"><b data-i18n="challenge">Desafio</b><span data-i18n="challengeDesc">Sem dicas! Você só descobre se acertou no final.</span></button>
+      </div>
     </div>
     <div>
       <h3 class="cinzel" data-i18n="howTitle">Como jogar</h3>
@@ -189,6 +203,7 @@ footer{text-align:center;color:#7d6848;font-size:13px;padding:18px 10px 28px}
     <span class="chip"><small data-i18n="scoreLbl">Pontos</small><span id="hudScore">0</span></span>
   </div>
   <p class="prompt" id="prompt" data-i18n="prompt">Toque numa parte da estátua para começar</p>
+  <div class="finishwrap" style="margin:0 0 8px"><button type="button" class="btn btn-gold hidden" id="finishBtn" data-i18n="finish">Terminar ▸</button></div>
   <div class="stage">
     <svg id="statue" viewBox="0 0 360 620" role="img" aria-labelledby="svgTitle" xmlns="http://www.w3.org/2000/svg">
       <title id="svgTitle">Statue</title>
@@ -429,7 +444,7 @@ var T={
   correctIs:"O certo é:",youChose:"Você escolheu:",youTyped:"Você escreveu:",
   pts:"+{n} pontos",best:"Recorde ({lvl}): {n}",noBest:"Ainda sem recorde. Seja o primeiro!",newBest:"Novo recorde!",
   points:"pontos",correctLbl:"acertos",timeLbl:"tempo",bonusLbl:"bônus de rapidez",
-  again:"Jogar novamente",changeLevel:"Mudar o nível",skip:"Pular ▸",
+  again:"Jogar novamente",changeLevel:"Mudar o nível",skip:"Pular ▸",styleTitle:"Estilo de jogo",normal:"Normal",normalDesc:"Veja se acertou e o versículo depois de cada parte.",challenge:"Desafio",challengeDesc:"Sem dicas! Você só descobre se acertou no final.",finish:"Terminar ▸",saveAns:"Salvar resposta",savedT:"Resposta salva",savedD:"Você pode tocar na parte de novo para mudar a resposta antes de terminar.",yourMat:"Material:",yourKing:"Reino:",promptDoneC:"Tudo respondido! Revise o que quiser ou toque em Terminar.",promptC:"Desafio: sem dicas até o final!",revealOf:"Revelando {i} de 6",nextPart:"Próxima parte ▸",seeStone:"Ver a pedra ▸",
   verseFoot:"“O sonho é verdadeiro, e a explicação também.” Daniel 2:45",
   footer:"Lição da Escola Sabatina · Daniel 2",
   thPart:"Parte",thYou:"Sua resposta",thRight:"Correto",
@@ -463,7 +478,7 @@ var T={
   correctIs:"Correct answer:",youChose:"You chose:",youTyped:"You typed:",
   pts:"+{n} points",best:"Best score ({lvl}): {n}",noBest:"No best score yet. Be the first!",newBest:"New best score!",
   points:"points",correctLbl:"correct",timeLbl:"time",bonusLbl:"speed bonus",
-  again:"Play again",changeLevel:"Change level",skip:"Skip ▸",
+  again:"Play again",changeLevel:"Change level",skip:"Skip ▸",styleTitle:"Game style",normal:"Normal",normalDesc:"See if you got it right, plus the verse, after each part.",challenge:"Challenge",challengeDesc:"No hints! You only find out what you got right at the end.",finish:"Finish ▸",saveAns:"Save answer",savedT:"Answer saved",savedD:"You can tap the part again to change your answer before you finish.",yourMat:"Material:",yourKing:"Kingdom:",promptDoneC:"All answered! Review anything you like, or tap Finish.",promptC:"Challenge: no hints until the end!",revealOf:"Revealing {i} of 6",nextPart:"Next part ▸",seeStone:"See the stone ▸",
   verseFoot:"“The dream is certain, and the interpretation thereof sure.” Daniel 2:45",
   footer:"Sabbath School lesson · Daniel 2",
   thPart:"Part",thYou:"Your answer",thRight:"Correct",
@@ -514,7 +529,7 @@ function detectKingdom(input){
 
 /* ---------- state ---------- */
 var LS={get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},set:function(k,v){try{localStorage.setItem(k,v);}catch(e){}}};
-var st={lang:(LS.get("d2s_lang")==="en"?"en":"pt"),level:(LS.get("d2s_level")==="hard"?"hard":"easy"),answers:{},t0:0,elapsed:0,timer:null,cur:null,sel:null,shuffles:{},finished:false,result:null,view:"start"};
+var st={lang:(LS.get("d2s_lang")==="en"?"en":"pt"),level:(LS.get("d2s_level")==="hard"?"hard":"easy"),challenge:LS.get("d2s_style")==="challenge",revealing:false,revealIdx:0,justSaved:false,answers:{},t0:0,elapsed:0,timer:null,cur:null,sel:null,shuffles:{},finished:false,result:null,view:"start"};
 var $=function(id){return document.getElementById(id);};
 function t(k){return T[st.lang][k];}
 function fmt(str,o){return str.replace(/\{(\w+)\}/g,function(_,k){return o[k];});}
@@ -540,12 +555,14 @@ function applyLang(){
   [].forEach.call(document.querySelectorAll(".lang button"),function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-lang")===st.lang));});
   $("stoneCap").textContent=t("stoneCap");$("svgTitle").textContent=t("svg");
   PARTS.forEach(function(p){$("p-"+p).setAttribute("aria-label",fmt(t("tapPart"),{p:t("parts")[p]}));});
-  $("hudLevel").textContent=t(st.level);
+  $("hudLevel").textContent=lvlLabel();
   renderBestLine();renderLegend();updatePrompt();
   if(!$("overlay").classList.contains("hidden")&&st.cur) renderSheet();
   if(st.view==="results") renderResults();
 }
-function renderBestLine(){var b=LS.get("d2s_best_"+st.level);$("bestLine").textContent=b?fmt(t("best"),{lvl:t(st.level),n:b}):t("noBest");}
+function bestKey(){return "d2s_best_"+st.level+(st.challenge?"_c":"");}
+function lvlLabel(){return t(st.level)+(st.challenge?" · "+t("challenge"):"");}
+function renderBestLine(){var b=LS.get(bestKey());$("bestLine").textContent=b?fmt(t("best"),{lvl:lvlLabel(),n:b}):t("noBest");}
 
 /* ---------- statue setup ---------- */
 function setupStatue(){
@@ -563,8 +580,8 @@ function setupStatue(){
       if(d.tagName.toLowerCase()==="g"){d.setAttribute("fill","none");d.setAttribute("stroke","rgba(30,20,10,.55)");d.setAttribute("stroke-width","1.1");d.setAttribute("stroke-linecap","round");}
       else{d.setAttribute("fill","none");if(!d.getAttribute("stroke"))d.setAttribute("stroke","rgba(30,20,10,.5)");if(!d.getAttribute("stroke-width"))d.setAttribute("stroke-width","1.2");d.setAttribute("stroke-linecap","round");}
     });
-    g.addEventListener("click",function(){if(st.view==="game"&&!st.finished)openPart(g.getAttribute("data-part"));});
-    g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();if(st.view==="game"&&!st.finished)openPart(g.getAttribute("data-part"));}});
+    g.addEventListener("click",function(){if(st.view==="game"&&!st.finished&&!st.revealing)openPart(g.getAttribute("data-part"));});
+    g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();if(st.view==="game"&&!st.finished&&!st.revealing)openPart(g.getAttribute("data-part"));}});
   });
 }
 function paint(part,mat){
@@ -594,43 +611,54 @@ function setBadge(part,ok2){
 function renderLegend(){
   var L=$("legend");L.innerHTML="";
   PARTS.forEach(function(p){var a=st.answers[p];var b=document.createElement("button");b.type="button";b.textContent=t("parts")[p];
-    if(a){b.classList.add("done");if(!(a.matOk&&a.kingOk))b.classList.add("bad");else b.classList.add("ok");}
-    b.addEventListener("click",function(){if(st.view==="game"&&!st.finished)openPart(p);});L.appendChild(b);});
+    if(a){if(st.challenge&&!st.finished&&!a.revealed)b.classList.add("saved");else{b.classList.add("done");if(!(a.matOk&&a.kingOk))b.classList.add("bad");else b.classList.add("ok");}}
+    b.addEventListener("click",function(){if(st.view==="game"&&!st.finished&&!st.revealing)openPart(p);});L.appendChild(b);});
 }
 function updatePrompt(){
   var left=PARTS.filter(function(p){return !st.answers[p];}).length;
-  $("prompt").textContent=left===6?t("prompt"):left===0?t("promptDone"):left===1?t("promptOne"):fmt(t("promptMore"),{n:left});
+  $("prompt").textContent=left===6?(st.challenge?t("promptC"):t("prompt")):left===0?(st.challenge?(st.revealing||st.finished?t("promptDone"):t("promptDoneC")):t("promptDone")):left===1?t("promptOne"):fmt(t("promptMore"),{n:left});
+  var fb=$("finishBtn");if(fb)fb.classList.toggle("hidden",!(st.challenge&&left===0&&!st.revealing&&!st.finished&&st.view==="game"));
 }
 
 /* ---------- flow ---------- */
 function show(view){st.view=view;["start","game","results"].forEach(function(v){$(v).classList.toggle("hidden",v!==view);});window.scrollTo(0,0);}
 function startGame(){
-  st.answers={};st.shuffles={};st.finished=false;st.cur=null;st.result=null;st.elapsed=0;
-  resetStatue();renderLegend();updatePrompt();$("hudScore").textContent="0";$("hudTime").textContent="0:00";$("hudLevel").textContent=t(st.level);
+  st.answers={};st.shuffles={};st.finished=false;st.cur=null;st.result=null;st.elapsed=0;st.revealing=false;st.revealIdx=0;st.justSaved=false;
+  resetStatue();renderLegend();updatePrompt();$("hudScore").textContent=st.challenge?"?":"0";$("hudTime").textContent="0:00";$("hudLevel").textContent=lvlLabel();
   show("game");st.t0=Date.now();clearInterval(st.timer);
   st.timer=setInterval(tick,250);
 }
 function tick(){st.elapsed=(Date.now()-st.t0)/1000;$("hudTime").textContent=mmss(st.elapsed);}
-function stopTimer(){tick();clearInterval(st.timer);st.timer=null;}
+function stopTimer(){if(st.timer){tick();clearInterval(st.timer);st.timer=null;}}
 
 function openPart(p){
-  st.cur=p;st.sel={mat:null,king:null,text:""};
+  st.cur=p;st.justSaved=false;var pa=st.challenge&&!st.revealing?st.answers[p]:null;
+  st.sel=pa?{mat:pa.mat,king:st.level==="easy"?pa.king:null,text:pa.text||""}:{mat:null,king:null,text:""};
   if(!st.shuffles[p]) st.shuffles[p]=shuffle(KINGS);
   PARTS.forEach(function(q){$("p-"+q).classList.toggle("sel",q===p);});
   $("overlay").classList.remove("hidden");renderSheet();
   var first=$("sheet").querySelector(".sw,.btn");if(first&&first.focus)try{first.focus({preventScroll:true});}catch(e){}
 }
 function closeSheet(){
+  if(st.revealing){revealNext();return;}
+  st.justSaved=false;
   $("overlay").classList.add("hidden");PARTS.forEach(function(q){$("p-"+q).classList.remove("sel");});
   var p=st.cur;st.cur=null;
-  if(p&&PARTS.every(function(q){return st.answers[q];})&&!st.finished) finish();
+  if(p&&!st.challenge&&PARTS.every(function(q){return st.answers[q];})&&!st.finished) finish();
+  updatePrompt();
 }
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 
 function renderSheet(){
   var p=st.cur,a=st.answers[p],S=$("sheet"),h="";
   h+='<h2 id="sheetTitle" class="cinzel"><span>'+esc(t("parts")[p])+'</span><button type="button" class="close" id="xBtn" aria-label="'+esc(t("close"))+'">×</button></h2>';
-  if(!a){
+  var formMode=!a||(st.challenge&&!st.revealing&&!st.justSaved);
+  if(st.revealing)h=h.replace('<h2 ','<div class="revealhdr">'+esc(fmt(t("revealOf"),{i:st.revealIdx+1}))+'</div><h2 ');
+  if(st.challenge&&!st.revealing&&st.justSaved&&a){
+    var KK=t("kings"),MM=t("mats");
+    h+='<div class="savednote"><b>💾 '+esc(t("savedT"))+'</b>'+esc(t("yourMat"))+' '+esc(MM[a.mat])+'<br>'+esc(t("yourKing"))+' '+esc(st.level==="hard"?"“"+a.text+"”":KK[a.king])+'<p style="margin:8px 0 0;font-size:14px;color:#6b5330">'+esc(t("savedD"))+'</p></div>';
+    h+='<div class="actions"><button type="button" class="btn btn-gold btn-wide" id="contBtn">'+esc(t("cont"))+'</button></div>';
+  }else if(formMode){
     h+='<div class="step">'+esc(t("step1"))+'</div><div class="swatches">';
     MATS.forEach(function(m){h+='<button type="button" class="sw" data-mat="'+m+'" aria-pressed="'+(st.sel.mat===m)+'"><i class="m-'+m+'"></i>'+esc(t("mats")[m])+'</button>';});
     h+='</div><div class="step">'+esc(t("step2"))+'</div>';
@@ -639,7 +667,7 @@ function renderSheet(){
     }else{
       h+='<input class="kinput" id="kInput" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="'+esc(t("typeHere"))+'" value="'+esc(st.sel.text)+'"><div class="hint">'+esc(t("typeHint"))+'</div>';
     }
-    h+='<div class="actions"><button type="button" class="btn btn-gold btn-wide" id="submitBtn">'+esc(t("submit"))+'</button></div>';
+    h+='<div class="actions"><button type="button" class="btn btn-gold btn-wide" id="submitBtn">'+esc(st.challenge?t("saveAns"):t("submit"))+'</button></div>';
   }else{
     var ck=ANSWER[p],K=t("kings"),M=t("mats");
     h+='<div class="fb">';
@@ -651,11 +679,12 @@ function renderSheet(){
     h+='<div class="verse"><b>📖 '+esc(v[0])+'</b><q>'+esc(v[1].replace(/^“|”$/g,""))+'</q></div>';
     h+='<div class="pts">'+esc(fmt(t("pts"),{n:a.pts}))+'</div>';
     var allDone=PARTS.every(function(q){return st.answers[q];});
-    h+='<div class="actions"><button type="button" class="btn btn-gold btn-wide" id="contBtn">'+esc(allDone&&!st.finished?t("seeResult"):t("cont"))+'</button></div>';
+    var lbl=st.revealing?(st.revealIdx<5?t("nextPart"):t("seeStone")):(allDone&&!st.finished?t("seeResult"):t("cont"));
+    h+='<div class="actions"><button type="button" class="btn btn-gold btn-wide" id="contBtn">'+esc(lbl)+'</button></div>';
   }
   S.innerHTML=h;
   $("xBtn").onclick=closeSheet;
-  if(!a){
+  if(formMode&&!(st.challenge&&!st.revealing&&st.justSaved&&a)){
     [].forEach.call(S.querySelectorAll(".sw"),function(b){b.onclick=function(){st.sel.mat=b.getAttribute("data-mat");[].forEach.call(S.querySelectorAll(".sw"),function(x){x.setAttribute("aria-pressed",String(x===b));});validate();};});
     [].forEach.call(S.querySelectorAll(".kopt"),function(b){b.onclick=function(){st.sel.king=b.getAttribute("data-king");[].forEach.call(S.querySelectorAll(".kopt"),function(x){x.setAttribute("aria-pressed",String(x===b));});validate();};});
     var inp=$("kInput");if(inp){inp.oninput=function(){st.sel.text=inp.value;validate();};inp.onkeydown=function(e){if(e.key==="Enter"&&!$("submitBtn").disabled)submit();};}
@@ -669,17 +698,43 @@ function submit(){
   var a={mat:st.sel.mat,king:king,text:st.sel.text.trim(),matOk:st.sel.mat===ck.mat,kingOk:king===ck.king};
   a.pts=Math.round(((a.matOk?100:0)+(a.kingOk?100:0))*mult());
   st.answers[p]=a;
+  if(st.challenge){
+    paint(p,a.mat);var gc=$("p-"+p);gc.classList.remove("todo");gc.classList.add("done");
+    st.justSaved=true;renderLegend();updatePrompt();renderSheet();
+    var cb=$("contBtn");if(cb&&cb.focus)try{cb.focus({preventScroll:true});}catch(e){}
+    return;
+  }
   if(PARTS.every(function(q){return st.answers[q];})) stopTimer();
   paint(p,a.mat);var g=$("p-"+p);g.classList.remove("todo");g.classList.add("done");
   setBadge(p,(a.matOk?1:0)+(a.kingOk?1:0));
   $("hudScore").textContent=baseScore();renderLegend();updatePrompt();renderSheet();
 }
 
+/* ---------- challenge reveal ---------- */
+function revealedScore(){var s=0;PARTS.forEach(function(p){var a=st.answers[p];if(a&&a.revealed)s+=a.pts;});return s;}
+function startReveal(){
+  if(!PARTS.every(function(q){return st.answers[q];}))return;
+  stopTimer();st.revealing=true;st.revealIdx=0;$("finishBtn").classList.add("hidden");$("hudScore").textContent="0";
+  revealPart();
+}
+function revealPart(){
+  var p=PARTS[st.revealIdx],a=st.answers[p];st.cur=p;st.justSaved=false;a.revealed=true;
+  PARTS.forEach(function(q){$("p-"+q).classList.toggle("sel",q===p);});
+  setBadge(p,(a.matOk?1:0)+(a.kingOk?1:0));$("hudScore").textContent=revealedScore();renderLegend();updatePrompt();
+  $("overlay").classList.remove("hidden");renderSheet();
+  var cb=$("contBtn");if(cb&&cb.focus)try{cb.focus({preventScroll:true});}catch(e){}
+}
+function revealNext(){
+  if(st.revealIdx<PARTS.length-1){st.revealIdx++;revealPart();return;}
+  st.revealing=false;st.cur=null;$("overlay").classList.add("hidden");PARTS.forEach(function(q){$("p-"+q).classList.remove("sel");});
+  finish();
+}
+
 /* ---------- finale ---------- */
 function anim(el,frames,opts){if(el&&el.animate){try{return el.animate(frames,opts);}catch(e){}}return null;}
 function finish(){
   st.finished=true;stopTimer();st.result=computeResult();
-  var key="d2s_best_"+st.level,prev=parseInt(LS.get(key)||"0",10);
+  var key=bestKey(),prev=parseInt(LS.get(key)||"0",10);st.result.challenge=st.challenge;
   st.result.newBest=st.result.total>prev;if(st.result.newBest)LS.set(key,String(st.result.total));
   st.result.best=Math.max(prev,st.result.total);
   PARTS.forEach(function(p){$("p-"+p).classList.remove("todo","shine");});
@@ -719,7 +774,7 @@ function renderResults(){
   $("resTitle").textContent=t(["res0","res1","res2","res3"][r.stars]);
   var s="";for(var i=0;i<3;i++)s+=i<r.stars?"★":'<span class="off">★</span>';$("resStars").innerHTML=s;
   $("resScore").textContent=r.total;$("resCorrect").textContent=r.correct+"/12";$("resTime").textContent=mmss(r.time);$("resBonus").textContent="+"+r.bonus;
-  $("resBest").innerHTML=(r.newBest?'<span class="newbest">'+esc(t("newBest"))+'</span><br>':"")+'<small style="color:#6b5330">'+esc(fmt(t("best"),{lvl:t(st.level),n:r.best}))+'</small>';
+  $("resBest").innerHTML=(r.newBest?'<span class="newbest">'+esc(t("newBest"))+'</span><br>':"")+'<small style="color:#6b5330">'+esc(fmt(t("best"),{lvl:lvlLabel(),n:r.best}))+'</small>';
   var K=t("kings"),M=t("mats"),h='<tr><th>'+esc(t("thPart"))+'</th><th>'+esc(t("thYou"))+'</th><th>'+esc(t("thRight"))+'</th></tr>';
   PARTS.forEach(function(p){var a=st.answers[p],c=ANSWER[p];if(!a)return;
     var yk=st.level==="hard"?("“"+a.text+"”"):K[a.king];
@@ -731,13 +786,16 @@ function renderResults(){
 [].forEach.call(document.querySelectorAll(".lang button"),function(b){b.addEventListener("click",function(){st.lang=b.getAttribute("data-lang");LS.set("d2s_lang",st.lang);applyLang();});});
 [].forEach.call(document.querySelectorAll(".level"),function(b){b.addEventListener("click",function(){st.level=b.getAttribute("data-level");LS.set("d2s_level",st.level);[].forEach.call(document.querySelectorAll(".level"),function(x){x.setAttribute("aria-pressed",String(x===b));});renderBestLine();});});
 document.querySelector('.level[data-level="'+st.level+'"]').click();
+[].forEach.call(document.querySelectorAll(".gstyle"),function(b){b.addEventListener("click",function(){st.challenge=b.getAttribute("data-style")==="challenge";LS.set("d2s_style",st.challenge?"challenge":"normal");[].forEach.call(document.querySelectorAll(".gstyle"),function(x){x.setAttribute("aria-pressed",String(x===b));});renderBestLine();});});
+document.querySelector('.gstyle[data-style="'+(st.challenge?"challenge":"normal")+'"]').click();
+$("finishBtn").addEventListener("click",startReveal);
 $("startBtn").addEventListener("click",startGame);
 $("againBtn").addEventListener("click",startGame);
 $("levelBtn").addEventListener("click",function(){resetStatue();renderBestLine();show("start");});
 $("overlay").addEventListener("click",function(e){if(e.target===$("overlay"))closeSheet();});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!$("overlay").classList.contains("hidden"))closeSheet();});
 setupStatue();applyLang();
-window.__d2={st:st,detectKingdom:detectKingdom,computeResult:computeResult,ANSWER:ANSWER};
+window.__d2={st:st,startReveal:startReveal,detectKingdom:detectKingdom,computeResult:computeResult,ANSWER:ANSWER};
 })();
 </script>
 </body>
