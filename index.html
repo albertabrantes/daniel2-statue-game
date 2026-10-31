@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Monte a Estátua de Daniel · Build Daniel's Statue</title>
+<meta name="description" content="Jogo bíblico de Daniel 2: monte a estátua do sonho de Nabucodonosor. Bible game on Daniel 2.">
+<meta name="theme-color" content="#1b130c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#1b130c;--bg2:#2a1d12;--parch:#efe0bf;--parch2:#d9c39a;--ink:#2b1d10;
+  --gold:#e3b54a;--gold2:#f6dc8c;--red:#c2492f;--green:#5f9a4c;--muted:#b9a27c;
+  --panel:#f3e6c8;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{
+  font-family:"Crimson Pro",Georgia,serif;color:var(--parch);
+  background:
+    radial-gradient(ellipse at 50% -10%,rgba(227,181,74,.18),transparent 60%),
+    radial-gradient(ellipse at 50% 120%,rgba(120,60,20,.35),transparent 60%),
+    repeating-linear-gradient(45deg,rgba(255,255,255,.012) 0 2px,transparent 2px 6px),
+    var(--bg);
+  min-height:100%;overflow-x:hidden;
+}
+h1,h2,h3,.cinzel{font-family:Cinzel,"Times New Roman",serif;letter-spacing:.04em}
+button{font-family:inherit;cursor:pointer}
+.hidden{display:none!important}
+
+/* header */
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top));
+  border-bottom:1px solid rgba(227,181,74,.25);background:rgba(0,0,0,.25);position:sticky;top:0;z-index:50;backdrop-filter:blur(4px)}
+header .brand{font-family:Cinzel,serif;font-weight:700;color:var(--gold2);font-size:clamp(14px,3.6vw,18px);line-height:1.1}
+.lang{display:inline-flex;border:1px solid var(--gold);border-radius:999px;overflow:hidden}
+.lang button{background:transparent;color:var(--gold2);border:0;padding:6px 12px;font-weight:600;font-size:14px;min-height:34px}
+.lang button[aria-pressed="true"]{background:var(--gold);color:var(--ink)}
+
+/* screens */
+.screen{max-width:980px;margin:0 auto;padding:16px}
+.card{background:linear-gradient(180deg,#f6ead0,#e6d2a8);color:var(--ink);border-radius:16px;
+  box-shadow:0 10px 40px rgba(0,0,0,.5),inset 0 0 0 1px rgba(120,80,30,.35),inset 0 0 40px rgba(140,90,30,.25);padding:20px}
+.title{text-align:center;margin:8px 0 4px;font-size:clamp(26px,7vw,44px);color:var(--gold2);text-shadow:0 2px 0 #000,0 0 24px rgba(227,181,74,.35)}
+.subtitle{text-align:center;color:var(--muted);margin:0 0 18px;font-size:18px;font-style:italic}
+.start-grid{display:grid;gap:16px}
+.start-grid h3{margin:0 0 10px;font-size:16px;color:#6b4a1c}
+.levels{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.level{border:2px solid #b08a4a;background:#fbf3df;color:var(--ink);border-radius:14px;padding:14px 10px;text-align:left;min-height:96px}
+.level b{font-family:Cinzel,serif;font-size:19px;display:block;margin-bottom:4px}
+.level span{font-size:15px;line-height:1.25;display:block;color:#5a4426}
+.level[aria-pressed="true"]{border-color:#7a4e10;background:linear-gradient(180deg,#f9e3a0,#e9c56b);box-shadow:0 0 0 3px rgba(227,181,74,.5)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:999px;padding:14px 26px;font-size:19px;font-weight:600;min-height:52px;
+  font-family:Cinzel,serif;letter-spacing:.05em}
+.btn-gold{background:linear-gradient(180deg,#f7dc86,#d29f2c 60%,#a8761a);color:#2b1a05;box-shadow:0 4px 0 #6d4a0d,0 8px 20px rgba(0,0,0,.4)}
+.btn-gold:active{transform:translateY(2px);box-shadow:0 2px 0 #6d4a0d}
+.btn-gold:disabled{filter:grayscale(.8) brightness(.8);cursor:not-allowed}
+.btn-ghost{background:transparent;border:2px solid #8a6a36;color:#5a3c14}
+.btn-wide{width:100%}
+.howto{font-size:16px;line-height:1.4;margin:0;padding-left:20px;color:#3e2b14}
+.howto li{margin:4px 0}
+.ref{font-size:14px;color:#7a5a2c;text-align:center;margin-top:6px}
+
+/* game */
+.hud{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.chip{background:rgba(0,0,0,.35);border:1px solid rgba(227,181,74,.4);border-radius:999px;padding:6px 14px;font-size:17px;color:var(--gold2);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip small{color:var(--muted);font-size:13px;margin-right:4px}
+.prompt{text-align:center;color:var(--parch2);font-size:18px;margin:2px 0 6px;min-height:24px}
+.stage{position:relative;display:flex;justify-content:center}
+#statue{width:min(100%,520px);height:auto;max-height:calc(100vh - 190px);min-height:420px;display:block;touch-action:manipulation}
+.part{cursor:pointer;outline:none;transition:filter .2s}
+.part.todo{animation:pulse 2.2s ease-in-out infinite}
+.part:hover,.part:focus-visible,.part.sel{filter:drop-shadow(0 0 5px #ffe08a) drop-shadow(0 0 12px rgba(255,200,80,.8))!important;animation:none}
+.part.done{cursor:pointer;animation:none}
+.part.shine{animation:shine 1.1s ease-out}
+@keyframes pulse{0%,100%{filter:drop-shadow(0 0 0 rgba(255,220,120,0))}50%{filter:drop-shadow(0 0 6px rgba(255,220,120,.55))}}
+@keyframes shine{0%{filter:brightness(1)}25%{filter:brightness(1.9) drop-shadow(0 0 14px #fff2b0)}100%{filter:brightness(1)}}
+.part,#figure{transform-box:fill-box;transform-origin:center}
+#mountain{transform-box:fill-box;transform-origin:50% 100%}
+.badge{pointer-events:none;opacity:0;transition:opacity .4s}
+.badge.show{opacity:1}
+.legend{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.legend button{background:rgba(0,0,0,.3);border:1px solid rgba(227,181,74,.35);color:var(--parch);border-radius:999px;padding:7px 12px;font-size:15px;min-height:38px}
+.legend button.ok{border-color:var(--green)}
+.legend button.bad{border-color:var(--red)}
+.legend button.done::before{content:"✓ ";color:#9fd38a}
+.legend button.done.bad::before{content:"✗ ";color:#ff8f74}
+
+/* panel (bottom sheet) */
+.overlay{position:fixed;inset:0;background:rgba(10,6,2,.55);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:min(100%,640px);max-height:92vh;overflow:auto;background:linear-gradient(180deg,#f8edd3,#e8d4a9);color:var(--ink);
+  border-radius:20px 20px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.6);animation:up .25s ease-out}
+@media(min-width:700px){.overlay{align-items:center}.sheet{border-radius:20px}}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet h2{margin:0 0 2px;font-size:22px;color:#5a3a0e;display:flex;justify-content:space-between;align-items:center}
+.close{background:transparent;border:0;font-size:28px;line-height:1;color:#6b4a1c;min-width:44px;min-height:44px}
+.step{font-family:Cinzel,serif;font-size:14px;color:#7a5524;margin:14px 0 8px;letter-spacing:.06em}
+.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sw{border:2px solid transparent;border-radius:14px;background:#fbf3df;padding:8px 6px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:92px;color:var(--ink);font-size:15px;line-height:1.1;font-weight:600}
+.sw i{display:block;width:100%;height:46px;border-radius:9px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.25),inset 0 -6px 12px rgba(0,0,0,.25)}
+.sw[aria-pressed="true"]{border-color:#7a4e10;box-shadow:0 0 0 3px rgba(227,181,74,.6)}
+.m-gold{background:linear-gradient(100deg,#6b4c0e,#f9e08a 25%,#c99a2e 45%,#fff3b0 60%,#a8791c 80%,#5c400a)}
+.m-silver{background:linear-gradient(100deg,#5d636a,#f4f6f8 25%,#aab1b8 45%,#fff 60%,#868c94 80%,#43484e)}
+.m-bronze{background:linear-gradient(100deg,#4a2a10,#e2a06a 25%,#a8622e 45%,#f3c79a 60%,#84481e 80%,#3e220c)}
+.m-iron{background:linear-gradient(100deg,#1e2125,#7d858e 25%,#474d54 45%,#a4acb4 60%,#363b41 80%,#16181b)}
+.m-ironclay{background:radial-gradient(circle at 22% 35%,#a87148 0 14%,transparent 15%),radial-gradient(circle at 70% 65%,#b98559 0 16%,transparent 17%),radial-gradient(circle at 55% 20%,#8e5c38 0 9%,transparent 10%),radial-gradient(circle at 15% 80%,#9b6a43 0 10%,transparent 11%),linear-gradient(100deg,#1e2125,#7d858e 25%,#474d54 45%,#a4acb4 60%,#363b41 80%,#16181b)}
+.m-stone{background:radial-gradient(circle at 30% 30%,rgba(255,255,255,.25),transparent 40%),repeating-radial-gradient(circle at 60% 60%,#7d7568 0 2px,#8f8678 2px 5px,#6f685c 5px 7px),#857d70}
+.kopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kopt{border:2px solid #c7a66b;background:#fbf3df;border-radius:12px;padding:10px;font-size:17px;min-height:50px;color:var(--ink);text-align:center}
+.kopt[aria-pressed="true"]{border-color:#7a4e10;background:#f6dc8c;box-shadow:0 0 0 3px rgba(227,181,74,.5)}
+.kinput{width:100%;font-size:19px;padding:12px 14px;border-radius:12px;border:2px solid #b08a4a;background:#fffaf0;color:var(--ink);font-family:inherit}
+.kinput:focus{outline:3px solid rgba(227,181,74,.6)}
+.hint{font-size:14px;color:#7a5a2c;margin-top:6px}
+.actions{margin-top:16px;display:flex;gap:10px}
+.fb{display:grid;gap:8px;margin-top:6px}
+.fbrow{display:flex;gap:10px;align-items:flex-start;background:#fbf3df;border-radius:12px;padding:10px 12px;font-size:17px;border-left:6px solid}
+.fbrow.ok{border-color:var(--green)}.fbrow.bad{border-color:var(--red)}
+.fbrow .ic{font-size:22px;line-height:1}
+.fbrow.ok .ic{color:var(--green)}.fbrow.bad .ic{color:var(--red)}
+.fbrow small{display:block;color:#6b5330;font-size:15px}
+.verse{margin-top:10px;background:#2b1d10;color:var(--parch);border-radius:12px;padding:12px 14px;font-size:17px;line-height:1.4;border:1px solid #8a6a36}
+.verse b{font-family:Cinzel,serif;color:var(--gold2);display:block;font-size:15px;margin-bottom:4px}
+.verse q{font-style:italic}
+.pts{font-family:Cinzel,serif;text-align:right;color:#7a4e10;font-size:16px;margin-top:6px}
+
+/* results */
+.res-head{text-align:center}
+.stars{font-size:46px;letter-spacing:6px;color:#d69f1f;text-shadow:0 2px 0 #6d4a0d;margin:4px 0}
+.stars .off{color:#c9b48c;text-shadow:none}
+.bigscore{font-family:Cinzel,serif;font-size:54px;font-weight:900;color:#5a3a0e;line-height:1}
+.newbest{display:inline-block;background:var(--red);color:#fff;border-radius:999px;padding:3px 12px;font-size:14px;margin-top:6px;font-family:Cinzel,serif}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.stat{background:#fbf3df;border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-family:Cinzel,serif;font-size:22px;color:#5a3a0e}
+.stat span{font-size:14px;color:#6b5330}
+.breakdown{width:100%;border-collapse:collapse;font-size:15px;margin:6px 0 14px}
+.breakdown th,.breakdown td{padding:7px 6px;border-bottom:1px solid rgba(120,80,30,.25);text-align:left;vertical-align:top}
+.breakdown th{font-family:Cinzel,serif;font-size:13px;color:#7a5524}
+.breakdown .x{color:var(--red)}.breakdown .v{color:var(--green)}
+.res-actions{display:grid;gap:10px}
+.skip{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.5);color:var(--gold2);border:1px solid var(--gold);border-radius:999px;padding:8px 14px;font-size:15px}
+.finale-text{position:absolute;left:0;right:0;top:8px;text-align:center;font-family:Cinzel,serif;color:var(--gold2);font-size:clamp(16px,4.4vw,22px);text-shadow:0 2px 6px #000;padding:0 12px;opacity:0;transition:opacity .6s}
+.finale-text.show{opacity:1}
+footer{text-align:center;color:#7d6848;font-size:13px;padding:18px 10px 28px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand" data-i18n="title">Monte a Estátua de Daniel</div>
+  <div class="lang" role="group" aria-label="Language / Idioma">
+    <button type="button" data-lang="pt" aria-pressed="true">PT</button>
+    <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  </div>
+</header>
+
+<!-- START -->
+<section id="start" class="screen">
+  <h1 class="title" data-i18n="title">Monte a Estátua de Daniel</h1>
+  <p class="subtitle" data-i18n="subtitle">O sonho do rei Nabucodonosor · Daniel 2:31–45</p>
+  <div class="card start-grid">
+    <div>
+      <h3 class="cinzel" data-i18n="chooseLevel">Escolha o nível</h3>
+      <div class="levels">
+        <button type="button" class="level" data-level="easy" aria-pressed="true"><b data-i18n="easy">Fácil</b><span data-i18n="easyDesc">Escolha o metal e o reino entre as opções.</span></button>
+        <button type="button" class="level" data-level="hard" aria-pressed="false"><b data-i18n="hard">Difícil</b><span data-i18n="hardDesc">Escolha o metal e digite o nome do reino. Pontos ×1,5!</span></button>
+      </div>
+    </div>
+    <div>
+      <h3 class="cinzel" data-i18n="howTitle">Como jogar</h3>
+      <ol class="howto">
+        <li data-i18n="how1">Toque em qualquer parte da estátua, na ordem que quiser.</li>
+        <li data-i18n="how2">Escolha o material (metal) daquela parte.</li>
+        <li data-i18n="how3">Diga qual reino ela representa.</li>
+        <li data-i18n="how4">Acertos valem pontos. Quanto mais rápido, maior o bônus!</li>
+      </ol>
+    </div>
+    <button type="button" id="startBtn" class="btn btn-gold btn-wide" data-i18n="start">Começar</button>
+    <div class="ref" id="bestLine"></div>
+  </div>
+</section>
+
+<!-- GAME -->
+<section id="game" class="screen hidden">
+  <div class="hud">
+    <span class="chip"><small data-i18n="levelLbl">Nível</small><span id="hudLevel">Fácil</span></span>
+    <span class="chip"><small>⏱</small><span id="hudTime">0:00</span></span>
+    <span class="chip"><small data-i18n="scoreLbl">Pontos</small><span id="hudScore">0</span></span>
+  </div>
+  <p class="prompt" id="prompt" data-i18n="prompt">Toque numa parte da estátua para começar</p>
+  <div class="stage">
+    <svg id="statue" viewBox="0 0 360 620" role="img" aria-labelledby="svgTitle" xmlns="http://www.w3.org/2000/svg">
+      <title id="svgTitle">Statue</title>
+      <defs>
+        <linearGradient id="m-plaster" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#77736c"/><stop offset=".22" stop-color="#d9d5cc"/><stop offset=".45" stop-color="#bcb7ad"/><stop offset=".6" stop-color="#e8e4dc"/><stop offset=".82" stop-color="#a29d93"/><stop offset="1" stop-color="#6c6861"/>
+        </linearGradient>
+        <linearGradient id="m-gold" x1="0" x2="1" y1="0" y2=".15">
+          <stop offset="0" stop-color="#5c400a"/><stop offset=".2" stop-color="#f9e08a"/><stop offset=".42" stop-color="#c99a2e"/><stop offset=".58" stop-color="#fff3b0"/><stop offset=".8" stop-color="#a8791c"/><stop offset="1" stop-color="#4f3608"/>
+        </linearGradient>
+        <linearGradient id="m-silver" x1="0" x2="1" y1="0" y2=".15">
+          <stop offset="0" stop-color="#4a4f55"/><stop offset=".2" stop-color="#f4f6f8"/><stop offset=".42" stop-color="#aab1b8"/><stop offset=".58" stop-color="#ffffff"/><stop offset=".8" stop-color="#868c94"/><stop offset="1" stop-color="#3e4247"/>
+        </linearGradient>
+        <linearGradient id="m-bronze" x1="0" x2="1" y1="0" y2=".15">
+          <stop offset="0" stop-color="#3e220c"/><stop offset=".2" stop-color="#e2a06a"/><stop offset=".42" stop-color="#a8622e"/><stop offset=".58" stop-color="#f3c79a"/><stop offset=".8" stop-color="#84481e"/><stop offset="1" stop-color="#351c09"/>
+        </linearGradient>
+        <linearGradient id="m-iron" x1="0" x2="1" y1="0" y2=".15">
+          <stop offset="0" stop-color="#16181b"/><stop offset=".2" stop-color="#7d858e"/><stop offset=".42" stop-color="#474d54"/><stop offset=".58" stop-color="#a4acb4"/><stop offset=".8" stop-color="#363b41"/><stop offset="1" stop-color="#121417"/>
+        </linearGradient>
+        <linearGradient id="g-ironflat" x1="0" x2="1">
+          <stop offset="0" stop-color="#2a2e33"/><stop offset=".3" stop-color="#7d858e"/><stop offset=".55" stop-color="#4b5158"/><stop offset=".75" stop-color="#9aa2aa"/><stop offset="1" stop-color="#262a2e"/>
+        </linearGradient>
+        <pattern id="m-ironclay" patternUnits="userSpaceOnUse" width="34" height="30">
+          <rect width="34" height="30" fill="url(#g-ironflat)"/>
+          <path d="M3 4c5-3 10 0 9 5s-7 6-10 3-3-6 1-8z" fill="#9b6a43"/>
+          <path d="M20 14c6-2 12 2 10 7s-9 5-11 1 -3-6 1-8z" fill="#b5835a"/>
+          <path d="M6 22c3-1 6 1 5 3s-5 3-6 1z" fill="#8a5a35"/>
+          <path d="M24 2c2 0 4 1 3 3s-4 1-4 0z" fill="#a87148"/>
+          <path d="M14 10l3 4M28 26l-4 2" stroke="#3a2412" stroke-width=".8" opacity=".6"/>
+        </pattern>
+        <filter id="noise" x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/>
+          <feColorMatrix values="0 0 0 0 .2  0 0 0 0 .18  0 0 0 0 .15  0 0 0 .9 -.25"/>
+          <feComposite in2="SourceGraphic" operator="in"/>
+        </filter>
+        <radialGradient id="g-stone" cx=".35" cy=".3" r=".9">
+          <stop offset="0" stop-color="#b3aa9a"/><stop offset=".5" stop-color="#857c6e"/><stop offset="1" stop-color="#4f493f"/>
+        </radialGradient>
+        <pattern id="m-stone" patternUnits="objectBoundingBox" width="1" height="1" patternContentUnits="objectBoundingBox">
+          <rect width="1" height="1" fill="url(#g-stone)"/>
+          <rect width="1" height="1" filter="url(#noise)" opacity=".7"/>
+        </pattern>
+        <linearGradient id="shade" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#fff" stop-opacity=".18"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#000" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".4"/>
+        </linearGradient>
+        <linearGradient id="vshade" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity=".12"/><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".25"/>
+        </linearGradient>
+        <linearGradient id="g-ped" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#5a4630"/><stop offset="1" stop-color="#2a1e12"/>
+        </linearGradient>
+        <linearGradient id="g-mtn" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stop-color="#a99f8e"/><stop offset=".5" stop-color="#7a7163"/><stop offset="1" stop-color="#3d372f"/>
+        </linearGradient>
+        <radialGradient id="g-glow" cx=".5" cy=".5" r=".5">
+          <stop offset="0" stop-color="#ffe9a8" stop-opacity=".55"/><stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+
+      <!-- ground & pedestal -->
+      <ellipse cx="165" cy="602" rx="160" ry="14" fill="#000" opacity=".35"/>
+      <g id="pedestal">
+        <path d="M70 574h190l10 14v20H60v-20z" fill="url(#g-ped)"/>
+        <path d="M70 574h190l10 14H60z" fill="#6e583c"/>
+        <path d="M60 596h210" stroke="#1d140b" stroke-width="2" opacity=".6"/>
+        <text x="165" y="603" text-anchor="middle" font-family="Cinzel,serif" font-size="9" fill="#c9a96a" opacity=".8">DANIEL 2 · 31–45</text>
+      </g>
+
+      <!-- mountain (finale) -->
+      <g id="mountain" opacity="0">
+        <path d="M-10 620 L40 520 L70 545 L120 440 L150 470 L185 360 L215 300 L245 360 L270 330 L310 430 L335 410 L370 500 L370 620 Z" fill="url(#g-mtn)"/>
+        <path d="M215 300 L200 340 L215 330 L228 350 L245 360 Z M270 330 L262 352 L276 346 Z" fill="#e9e2d2" opacity=".7"/>
+        <path d="M185 360 L170 420 M215 300 L222 380 M120 440 L112 500 M310 430 L300 500" stroke="#2f2a23" stroke-width="2" opacity=".5"/>
+      </g>
+
+      <g id="figure">
+      <!-- LEGS -->
+      <g id="p-legs" class="part" data-part="legs" tabindex="0" role="button">
+        <path class="fill" d="M128 396h28l-2 52q-1 30-2 70h-21q-6-30-5-62z"/>
+        <path class="fill" d="M202 396h-28l2 52q1 30 2 70h21q6-30 5-62z"/>
+        <path class="det" d="M136 446q7 4 13 0M194 446q-7 4-13 0M133 470q3 20 2 40M197 470q-3 20-2 40M150 410q2 40-2 100M180 410q-2 40 2 100"/>
+        <path class="det" d="M131 500h22M177 500h22" stroke-dasharray="2 2"/>
+      </g>
+      <!-- FEET -->
+      <g id="p-feet" class="part" data-part="feet" tabindex="0" role="button">
+        <path class="fill" d="M131 514h22l2 30q4 14 0 24q-2 4-8 4h-34q-10 0-10-6q0-6 8-10q12-8 18-22z"/>
+        <path class="fill" d="M199 514h-22l-2 30q-4 14 0 24q2 4 8 4h34q10 0 10-6q0-6-8-10q-12-8-18-22z"/>
+        <g class="toes">
+          <ellipse class="fill" cx="107" cy="567" rx="5" ry="4.5"/><ellipse class="fill" cx="116" cy="569" rx="4.5" ry="4"/><ellipse class="fill" cx="124" cy="570" rx="4" ry="3.6"/><ellipse class="fill" cx="131" cy="571" rx="3.6" ry="3.3"/><ellipse class="fill" cx="138" cy="571" rx="3.4" ry="3"/>
+          <ellipse class="fill" cx="223" cy="567" rx="5" ry="4.5"/><ellipse class="fill" cx="214" cy="569" rx="4.5" ry="4"/><ellipse class="fill" cx="206" cy="570" rx="4" ry="3.6"/><ellipse class="fill" cx="199" cy="571" rx="3.6" ry="3.3"/><ellipse class="fill" cx="192" cy="571" rx="3.4" ry="3"/>
+        </g>
+        <path class="det" d="M133 524q8 3 18 0M177 524q10 3 20 0M138 545q-6 10-16 16M192 545q6 10 16 16"/>
+        <path class="det" d="M126 538l6 4M200 538l-6 4M140 560l4 6M190 560l-4 6" opacity=".6"/>
+      </g>
+      <!-- BELLY & THIGHS -->
+      <g id="p-belly" class="part" data-part="belly" tabindex="0" role="button">
+        <path class="fill" d="M117 276h96l4 52 6 72q-58 12-116 0l6-72z"/>
+        <path class="fill" d="M114 260q51 8 102 0v18q-51 8-102 0z"/>
+        <path class="det" d="M114 262q51 8 102 0M114 276q51 8 102 0"/>
+        <g class="det-studs">
+          <circle class="fill" cx="125" cy="269" r="3"/><circle class="fill" cx="145" cy="271.5" r="3"/><circle class="fill" cx="165" cy="272.5" r="3.6"/><circle class="fill" cx="185" cy="271.5" r="3"/><circle class="fill" cx="205" cy="269" r="3"/>
+        </g>
+        <path class="det" d="M165 285q-4 22 0 40M128 290q-2 50-6 104M145 292q0 50-2 108M185 292q0 50 2 108M202 290q2 50 6 104M165 335v68"/>
+        <path class="det" d="M146 300q19 10 38 0" opacity=".6"/>
+        <path class="det" d="M108 398q57 12 114 0" />
+        <path class="det" d="M110 392v10M118 394v10M126 396v10M134 397v10M142 398v10M150 399v10M158 399v10M166 399v10M174 399v10M182 399v10M190 398v10M198 397v10M206 396v10M214 394v10M221 392v10" stroke-width="1.6"/>
+      </g>
+      <!-- CHEST & ARMS -->
+      <g id="p-chest" class="part" data-part="chest" tabindex="0" role="button">
+        <path class="fill" d="M152 106h26v32h-26z"/>
+        <path class="fill" d="M104 154q8-18 34-22q27-6 54 0q26 4 34 22l-10 108q-51 10-102 0z"/>
+        <!-- arms -->
+        <path class="fill" d="M106 150q-18 6-20 34l-4 70q-2 34 2 58l20 2q0-28 4-56l8-60q2-30-10-48z"/>
+        <path class="fill" d="M224 150q18 6 20 34l4 70q2 34-2 58l-20 2q0-28-4-56l-8-60q-2-30 10-48z"/>
+        <!-- hands -->
+        <path class="fill" d="M83 310q-4 14 0 26q4 10 10 12q8 2 10-6l2-30z"/>
+        <path class="fill" d="M247 310q4 14 0 26q-4 10-10 12q-8 2-10-6l-2-30z"/>
+        <path class="det" d="M88 330v12M93 332v13M98 332v12M242 330v12M237 332v13M232 332v12"/>
+        <!-- bracelets & armlets -->
+        <path class="fill" d="M83 296q11 4 22 0v8q-11 4-22 0z"/><path class="fill" d="M247 296q-11 4-22 0v8q11 4 22 0z"/>
+        <path class="fill" d="M88 192q12 4 24 0v8q-12 4-24 0z"/><path class="fill" d="M242 192q-12 4-24 0v8q12 4 24 0z"/>
+        <circle class="fill" cx="94" cy="300" r="2.4"/><circle class="fill" cx="236" cy="300" r="2.4"/>
+        <!-- pectoral, shawl -->
+        <path class="det" d="M132 160q33 14 66 0M138 178q27 12 54 0" />
+        <path class="det" d="M122 214q20 10 40 2M168 216q20 8 40-2" opacity=".7"/>
+        <path class="det" d="M114 150l98 110M120 146l96 106" />
+        <path class="det" d="M126 168l-4 6M138 182l-4 6M150 196l-4 6M162 210l-4 6M174 224l-4 6M186 238l-4 6M198 252l-4 6" stroke-width="1.4"/>
+        <path class="det" d="M96 230q8 3 14 0M234 230q-8 3-14 0M100 170q4 14 4 28M230 170q-4 14-4 28"/>
+        <circle class="det" cx="165" cy="146" r="5"/>
+      </g>
+      <!-- HEAD -->
+      <g id="p-head" class="part" data-part="head" tabindex="0" role="button">
+        <!-- hair mass with curls -->
+        <path class="fill" d="M134 66q-8 26-4 52q4 12 12 12h46q8 0 12-12q4-26-4-52z"/>
+        <!-- crown -->
+        <path class="fill" d="M136 64l-3-46q32-10 64 0l-3 46q-29 6-58 0z"/>
+        <path class="fill" d="M131 62q34 8 68 0v8q-34 8-68 0z"/>
+        <path class="det" d="M134 30q31 7 62 0M135 44q30 7 60 0M133 18q32-10 64 0"/>
+        <circle class="det" cx="150" cy="38" r="3"/><circle class="det" cx="165" cy="39.5" r="3.4"/><circle class="det" cx="180" cy="38" r="3"/>
+        <path class="det" d="M140 54q4-8 10-6M190 54q-4-8-10-6M146 26q-6-4-4-10M184 26q6-4 4-10"/>
+        <path class="fill" d="M162 8l3-6 3 6-3 10z"/>
+        <!-- face -->
+        <path class="fill" d="M143 70q22-6 44 0q2 26-4 38q-18 10-36 0q-6-12-4-38z"/>
+        <path class="fill" d="M139 82q-5 2-3 10q2 6 6 4z"/><path class="fill" d="M191 82q5 2 3 10q-2 6-6 4z"/>
+        <path class="det" d="M148 80q6-4 12-1M170 79q6-3 12 1" stroke-width="2"/>
+        <path class="det" d="M149 86q5-4 10 0q-5 3-10 0zM171 86q5-4 10 0q-5 3-10 0z" />
+        <circle cx="154" cy="86" r="1.6" fill="#1a1208" opacity=".8"/><circle cx="176" cy="86" r="1.6" fill="#1a1208" opacity=".8"/>
+        <path class="det" d="M165 86q-1 10-4 14q4 2 8 0"/>
+        <!-- beard -->
+        <path class="fill" d="M146 100q19 8 38 0l4 20 -2 44q-21 8-42 0l-2-44z"/>
+        <path class="det" d="M152 102q13-6 26 0q-6 4-13 2q-7 2-13-2z" stroke-width="1.4"/>
+        <path class="det" d="M158 108q7 3 14 0"/>
+        <g class="det curls">
+          <path d="M147 120a3 3 0 1 1 5 2M155 121a3 3 0 1 1 5 2M163 121a3 3 0 1 1 5 2M171 121a3 3 0 1 1 5 2M179 120a3 3 0 1 1 5 2"/>
+          <path d="M147 132a3 3 0 1 1 5 2M155 133a3 3 0 1 1 5 2M163 133a3 3 0 1 1 5 2M171 133a3 3 0 1 1 5 2M179 132a3 3 0 1 1 5 2"/>
+          <path d="M147 144a3 3 0 1 1 5 2M155 145a3 3 0 1 1 5 2M163 145a3 3 0 1 1 5 2M171 145a3 3 0 1 1 5 2M179 144a3 3 0 1 1 5 2"/>
+          <path d="M148 156a3 3 0 1 1 5 2M156 157a3 3 0 1 1 5 2M164 157a3 3 0 1 1 5 2M172 157a3 3 0 1 1 5 2"/>
+          <path d="M136 76a3 3 0 1 1 4 3M135 88a3 3 0 1 1 4 3M135 100a3 3 0 1 1 4 3M137 112a3 3 0 1 1 4 3M190 76a3 3 0 1 0 4 3M191 88a3 3 0 1 0 4 3M191 100a3 3 0 1 0 4 3M189 112a3 3 0 1 0 4 3"/>
+        </g>
+        <path class="det" d="M147 116v44M183 116v44M157 112v50M165 112v52M173 112v50" opacity=".35"/>
+      </g>
+      </g>
+      <!-- STONE -->
+      <g id="p-stone" class="part" data-part="stone" tabindex="0" role="button">
+        <circle cx="303" cy="82" r="46" fill="url(#g-glow)"/>
+        <path class="fill" d="M274 72l16-20 28 2 18 20-4 28-22 14-28-6-12-18z"/>
+        <path class="det" d="M290 52l8 22-10 16M318 54l-8 20 14 14M298 74l14 0M284 104l6-14"/>
+        <path class="det" d="M278 80l8 2M326 96l-6-2" opacity=".6"/>
+        <text x="303" y="138" text-anchor="middle" font-size="9" fill="#c9a96a" font-style="italic" id="stoneCap">“sem mãos”</text>
+      </g>
+
+      <!-- badges -->
+      <g id="badges" font-family="Cinzel,serif" font-weight="900" font-size="14" text-anchor="middle">
+        <g class="badge" data-b="head"   transform="translate(214 40)"><circle r="11"/><text y="5"></text></g>
+        <g class="badge" data-b="chest"  transform="translate(262 190)"><circle r="11"/><text y="5"></text></g>
+        <g class="badge" data-b="belly"  transform="translate(240 340)"><circle r="11"/><text y="5"></text></g>
+        <g class="badge" data-b="legs"   transform="translate(222 460)"><circle r="11"/><text y="5"></text></g>
+        <g class="badge" data-b="feet"   transform="translate(252 548)"><circle r="11"/><text y="5"></text></g>
+        <g class="badge" data-b="stone"  transform="translate(340 50)"><circle r="11"/><text y="5"></text></g>
+      </g>
+    </svg>
+    <div class="finale-text" id="finaleText"></div>
+    <button type="button" class="skip hidden" id="skipBtn" data-i18n="skip">Pular ▸</button>
+  </div>
+  <div class="legend" id="legend"></div>
+</section>
+
+<!-- RESULTS -->
+<section id="results" class="screen hidden">
+  <div class="card">
+    <div class="res-head">
+      <h2 class="cinzel" style="margin:0;color:#5a3a0e" id="resTitle"></h2>
+      <div class="stars" id="resStars"></div>
+      <div class="bigscore" id="resScore">0</div>
+      <div style="color:#6b5330" data-i18n="points">pontos</div>
+      <div id="resBest"></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><b id="resCorrect">0/12</b><span data-i18n="correctLbl">acertos</span></div>
+      <div class="stat"><b id="resTime">0:00</b><span data-i18n="timeLbl">tempo</span></div>
+      <div class="stat"><b id="resBonus">+0</b><span data-i18n="bonusLbl">bônus de rapidez</span></div>
+    </div>
+    <table class="breakdown" id="breakdown"></table>
+    <div class="res-actions">
+      <button type="button" class="btn btn-gold btn-wide" id="againBtn" data-i18n="again">Jogar novamente</button>
+      <button type="button" class="btn btn-ghost btn-wide" id="levelBtn" data-i18n="changeLevel">Mudar o nível</button>
+    </div>
+    <p class="ref" data-i18n="verseFoot">“O sonho é verdadeiro, e a explicação também.” Daniel 2:45</p>
+  </div>
+</section>
+
+<!-- PANEL -->
+<div class="overlay hidden" id="overlay">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" id="sheet"></div>
+</div>
+
+<footer data-i18n="footer">Lição da Escola Sabatina · Daniel 2</footer>
+
+<script>
+(function(){
+"use strict";
+var PARTS=["head","chest","belly","legs","feet","stone"];
+var MATS=["gold","silver","bronze","iron","ironclay","stone"];
+var KINGS=["babylon","persia","greece","rome","divided","god"];
+var ANSWER={head:{mat:"gold",king:"babylon"},chest:{mat:"silver",king:"persia"},belly:{mat:"bronze",king:"greece"},legs:{mat:"iron",king:"rome"},feet:{mat:"ironclay",king:"divided"},stone:{mat:"stone",king:"god"}};
+var T={
+ pt:{
+  title:"Monte a Estátua de Daniel",subtitle:"O sonho do rei Nabucodonosor · Daniel 2:31–45",
+  chooseLevel:"Escolha o nível",easy:"Fácil",hard:"Difícil",
+  easyDesc:"Escolha o metal e o reino entre as opções.",hardDesc:"Escolha o metal e digite o nome do reino. Pontos ×1,5!",
+  howTitle:"Como jogar",how1:"Toque em qualquer parte da estátua, na ordem que quiser.",how2:"Escolha o material (metal) daquela parte.",how3:"Diga qual reino ela representa.",how4:"Acertos valem pontos. Quanto mais rápido, maior o bônus!",
+  start:"Começar",levelLbl:"Nível",scoreLbl:"Pontos",prompt:"Toque numa parte da estátua para começar",
+  promptMore:"Faltam {n} partes. Toque na próxima!",promptOne:"Falta 1 parte!",promptDone:"Estátua completa!",
+  step1:"1. Do que é feita esta parte?",step2:"2. Que reino ela representa?",
+  typeHere:"Digite o nome do reino…",typeHint:"Pode escrever em português ou inglês. Acentos não importam.",
+  submit:"Confirmar",cont:"Continuar",seeResult:"Ver o resultado ▸",close:"Fechar",
+  matOk:"Material certo!",matBad:"Material errado",kingOk:"Reino certo!",kingBad:"Reino errado",
+  correctIs:"O certo é:",youChose:"Você escolheu:",youTyped:"Você escreveu:",
+  pts:"+{n} pontos",best:"Recorde ({lvl}): {n}",noBest:"Ainda sem recorde. Seja o primeiro!",newBest:"Novo recorde!",
+  points:"pontos",correctLbl:"acertos",timeLbl:"tempo",bonusLbl:"bônus de rapidez",
+  again:"Jogar novamente",changeLevel:"Mudar o nível",skip:"Pular ▸",
+  verseFoot:"“O sonho é verdadeiro, e a explicação também.” Daniel 2:45",
+  footer:"Lição da Escola Sabatina · Daniel 2",
+  thPart:"Parte",thYou:"Sua resposta",thRight:"Correto",
+  res3:"Excelente! Você conhece Daniel 2!",res2:"Muito bem!",res1:"Bom começo!",res0:"Tente de novo!",
+  f1:"“Uma pedra foi cortada sem auxílio de mãos…”",f2:"“…e feriu a estátua nos pés de ferro e de barro.”",f3:"“A pedra se tornou um grande monte e encheu toda a terra.” (Dn 2:35)",
+  stoneCap:"“sem mãos”",svg:"Estátua do sonho de Daniel 2",tapPart:"Toque para escolher: {p}",
+  parts:{head:"Cabeça",chest:"Peito e braços",belly:"Ventre e coxas",legs:"Pernas",feet:"Pés e dedos",stone:"A pedra"},
+  mats:{gold:"Ouro",silver:"Prata",bronze:"Bronze",iron:"Ferro",ironclay:"Ferro e barro",stone:"Pedra"},
+  kings:{babylon:"Babilônia",persia:"Medo-Pérsia",greece:"Grécia",rome:"Roma",divided:"Reinos divididos da Europa",god:"Reino de Deus"},
+  dates:{babylon:"605–539 a.C.",persia:"539–331 a.C.",greece:"331–168 a.C.",rome:"168 a.C. – 476 d.C.",divided:"476 d.C. até hoje",god:"para sempre"},
+  verses:{
+   head:["Daniel 2:32, 37–38","A cabeça da estátua era de ouro puro… “O senhor, ó rei, é a cabeça de ouro.”"],
+   chest:["Daniel 2:32, 39","O peito e os braços eram de prata… Depois do senhor virá outro reino, mais fraco que o seu."],
+   belly:["Daniel 2:32, 39","O ventre e as coxas eram de bronze… Um terceiro reino, de bronze, vai dominar o mundo inteiro."],
+   legs:["Daniel 2:33, 40","As pernas eram de ferro… O quarto reino será forte como o ferro, que quebra e esmaga tudo."],
+   feet:["Daniel 2:33, 41–43","Os pés eram em parte de ferro e em parte de barro… O reino será dividido, e eles não vão ficar unidos, assim como o ferro não se mistura com o barro."],
+   stone:["Daniel 2:34–35, 44–45","Uma pedra se soltou sem que ninguém tocasse nela e virou um grande monte… O Deus do céu vai criar um reino que nunca será destruído e que vai durar para sempre."]
+  }
+ },
+ en:{
+  title:"Build Daniel's Statue",subtitle:"King Nebuchadnezzar's dream · Daniel 2:31–45",
+  chooseLevel:"Choose a level",easy:"Easy",hard:"Hard",
+  easyDesc:"Pick the metal and the kingdom from the options.",hardDesc:"Pick the metal and type the kingdom's name. Points ×1.5!",
+  howTitle:"How to play",how1:"Tap any part of the statue, in any order.",how2:"Choose the material (metal) for that part.",how3:"Name the kingdom it stands for.",how4:"Right answers earn points. The faster you finish, the bigger the bonus!",
+  start:"Start",levelLbl:"Level",scoreLbl:"Score",prompt:"Tap a part of the statue to begin",
+  promptMore:"{n} parts left. Tap the next one!",promptOne:"1 part left!",promptDone:"Statue complete!",
+  step1:"1. What is this part made of?",step2:"2. Which kingdom does it stand for?",
+  typeHere:"Type the kingdom's name…",typeHint:"English or Portuguese both work. Accents don't matter.",
+  submit:"Submit",cont:"Continue",seeResult:"See the result ▸",close:"Close",
+  matOk:"Right material!",matBad:"Wrong material",kingOk:"Right kingdom!",kingBad:"Wrong kingdom",
+  correctIs:"Correct answer:",youChose:"You chose:",youTyped:"You typed:",
+  pts:"+{n} points",best:"Best score ({lvl}): {n}",noBest:"No best score yet. Be the first!",newBest:"New best score!",
+  points:"points",correctLbl:"correct",timeLbl:"time",bonusLbl:"speed bonus",
+  again:"Play again",changeLevel:"Change level",skip:"Skip ▸",
+  verseFoot:"“The dream is certain, and the interpretation thereof sure.” Daniel 2:45",
+  footer:"Sabbath School lesson · Daniel 2",
+  thPart:"Part",thYou:"Your answer",thRight:"Correct",
+  res3:"Excellent! You know Daniel 2!",res2:"Well done!",res1:"Good start!",res0:"Try again!",
+  f1:"“A stone was cut out without hands…”",f2:"“…which smote the image upon his feet that were of iron and clay.”",f3:"“The stone became a great mountain, and filled the whole earth.” (Dan 2:35)",
+  stoneCap:"“without hands”",svg:"The statue from Daniel 2",tapPart:"Tap to choose: {p}",
+  parts:{head:"Head",chest:"Chest & arms",belly:"Belly & thighs",legs:"Legs",feet:"Feet & toes",stone:"The stone"},
+  mats:{gold:"Gold",silver:"Silver",bronze:"Bronze",iron:"Iron",ironclay:"Iron & clay",stone:"Stone"},
+  kings:{babylon:"Babylon",persia:"Medo-Persia",greece:"Greece",rome:"Rome",divided:"Divided kingdoms of Europe",god:"God's kingdom"},
+  dates:{babylon:"605–539 BC",persia:"539–331 BC",greece:"331–168 BC",rome:"168 BC – AD 476",divided:"AD 476 to today",god:"forever"},
+  verses:{
+   head:["Daniel 2:32, 37–38","This image's head was of fine gold… “Thou art this head of gold.”"],
+   chest:["Daniel 2:32, 39","His breast and his arms of silver… “After thee shall arise another kingdom inferior to thee.”"],
+   belly:["Daniel 2:32, 39","His belly and his thighs of brass… “Another third kingdom of brass, which shall bear rule over all the earth.”"],
+   legs:["Daniel 2:33, 40","His legs of iron… “The fourth kingdom shall be strong as iron: forasmuch as iron breaketh in pieces and subdueth all things.”"],
+   feet:["Daniel 2:33, 41–43","His feet part of iron and part of clay… “The kingdom shall be divided… they shall not cleave one to another, even as iron is not mixed with clay.”"],
+   stone:["Daniel 2:34–35, 44–45","“The stone that smote the image became a great mountain… the God of heaven [shall] set up a kingdom, which shall never be destroyed… and it shall stand for ever.”"]
+  }
+ }
+};
+
+/* ---------- lenient kingdom matching ---------- */
+function norm(s){return String(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g," ").trim();}
+var ALIAS=[ // priority order
+ ["god",{pre:["deus","jesus","crist","christ","etern","heaven","celest","messia","senhor jesus","reino de deus","kingdom of god","reino dos ceus","reino do ceu","reino celest"],exact:["god","gods","ceu","ceus","lord"]}],
+ ["divided",{pre:["europ","divid","divis","fragment","barbar","tribo","tribe","partid","nacoes","nations","nacao"],exact:[]}],
+ ["babylon",{pre:["babil","babel","babylon","nabuco","nebuchad","caldeu","caldei","chalde","neobabil","neo babil"],exact:[]}],
+ ["persia",{pre:["pers","medo","medes","medos","media pers","ciro","cyrus","aquemen","achaemen","dario","darius"],exact:["media"]}],
+ ["greece",{pre:["grec","greek","greec","greg","helen","hellen","alexand","macedon"],exact:[]}],
+ ["rome",{pre:["roma","rome","roman","cesar","caesar","latin"],exact:[]}]
+];
+var FUZZY={babilonia:"babylon",babylon:"babylon",babilon:"babylon",persia:"persia",persas:"persia",medopersia:"persia",grecia:"greece",greece:"greece",grego:"greece",gregos:"greece",roma:"rome",romano:"rome",rome:"rome",europa:"divided",europe:"divided",dividido:"divided",divididos:"divided",divided:"divided",deus:"god",jesus:"god",cristo:"god",christ:"god",kingdom:null};
+function lev(a,b){var m=a.length,n=b.length,d=[],i,j;for(i=0;i<=m;i++){d[i]=[i];}for(j=0;j<=n;j++)d[0][j]=j;for(i=1;i<=m;i++)for(j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n];}
+function detectKingdom(input){
+  var s=norm(input); if(!s) return null;
+  var padded=" "+s+" ";
+  for(var k=0;k<ALIAS.length;k++){
+    var key=ALIAS[k][0],a=ALIAS[k][1],i;
+    for(i=0;i<a.exact.length;i++) if(padded.indexOf(" "+a.exact[i]+" ")>=0) return key;
+    for(i=0;i<a.pre.length;i++) if(padded.indexOf(" "+a.pre[i])>=0) return key;
+  }
+  var words=s.split(" ").concat([s.replace(/ /g,"")]),best=null,bd=99;
+  words.forEach(function(w){ if(w.length<4) return;
+    Object.keys(FUZZY).forEach(function(f){ if(!FUZZY[f]) return; var d=lev(w,f),tol=f.length>=6?2:1; if(d<=tol&&d<bd){bd=d;best=FUZZY[f];} });
+  });
+  return best;
+}
+
+/* ---------- state ---------- */
+var LS={get:function(k){try{return localStorage.getItem(k);}catch(e){return null;}},set:function(k,v){try{localStorage.setItem(k,v);}catch(e){}}};
+var st={lang:(LS.get("d2s_lang")==="en"?"en":"pt"),level:(LS.get("d2s_level")==="hard"?"hard":"easy"),answers:{},t0:0,elapsed:0,timer:null,cur:null,sel:null,shuffles:{},finished:false,result:null,view:"start"};
+var $=function(id){return document.getElementById(id);};
+function t(k){return T[st.lang][k];}
+function fmt(str,o){return str.replace(/\{(\w+)\}/g,function(_,k){return o[k];});}
+function mmss(sec){sec=Math.floor(sec);return Math.floor(sec/60)+":"+("0"+sec%60).slice(-2);}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;}return a;}
+function mult(){return st.level==="hard"?1.5:1;}
+function limit(){return st.level==="hard"?300:180;}
+function correctCount(){var c=0;PARTS.forEach(function(p){var a=st.answers[p];if(a){c+=(a.matOk?1:0)+(a.kingOk?1:0);}});return c;}
+function baseScore(){return Math.round(correctCount()*100*mult());}
+function computeResult(){
+  var c=correctCount(),base=baseScore(),secs=st.elapsed;
+  var bonus=Math.round(300*Math.max(0,1-secs/limit())*(c/12));
+  var total=base+bonus,max=Math.round(1200*mult())+300,r=total/max;
+  var stars=r>=0.9?3:r>=0.65?2:r>=0.35?1:0;
+  return {correct:c,base:base,bonus:bonus,total:total,max:max,stars:stars,time:secs};
+}
+
+/* ---------- i18n ---------- */
+function applyLang(){
+  document.documentElement.lang=st.lang==="pt"?"pt-BR":"en";
+  document.title=t("title")+(st.lang==="pt"?" · Build Daniel's Statue":" · Monte a Estátua de Daniel");
+  [].forEach.call(document.querySelectorAll("[data-i18n]"),function(el){var v=t(el.getAttribute("data-i18n"));if(typeof v==="string")el.textContent=v;});
+  [].forEach.call(document.querySelectorAll(".lang button"),function(b){b.setAttribute("aria-pressed",String(b.getAttribute("data-lang")===st.lang));});
+  $("stoneCap").textContent=t("stoneCap");$("svgTitle").textContent=t("svg");
+  PARTS.forEach(function(p){$("p-"+p).setAttribute("aria-label",fmt(t("tapPart"),{p:t("parts")[p]}));});
+  $("hudLevel").textContent=t(st.level);
+  renderBestLine();renderLegend();updatePrompt();
+  if(!$("overlay").classList.contains("hidden")&&st.cur) renderSheet();
+  if(st.view==="results") renderResults();
+}
+function renderBestLine(){var b=LS.get("d2s_best_"+st.level);$("bestLine").textContent=b?fmt(t("best"),{lvl:t(st.level),n:b}):t("noBest");}
+
+/* ---------- statue setup ---------- */
+function setupStatue(){
+  [].forEach.call(document.querySelectorAll(".part"),function(g){
+    var fills=g.querySelectorAll(".fill");
+    [].forEach.call(fills,function(f){
+      f.setAttribute("fill","url(#m-plaster)");
+      f.setAttribute("stroke","rgba(40,28,16,.55)");f.setAttribute("stroke-width","1");
+      if(f.tagName.toLowerCase()==="path"&&!f.closest(".toes")&&!f.closest(".det-studs")){
+        var c=f.cloneNode(false);c.removeAttribute("class");c.setAttribute("fill","url(#shade)");c.setAttribute("stroke","none");c.setAttribute("pointer-events","none");c.setAttribute("class","shadeov");
+        f.parentNode.insertBefore(c,f.nextSibling);
+      }
+    });
+    [].forEach.call(g.querySelectorAll(".det"),function(d){
+      if(d.tagName.toLowerCase()==="g"){d.setAttribute("fill","none");d.setAttribute("stroke","rgba(30,20,10,.55)");d.setAttribute("stroke-width","1.1");d.setAttribute("stroke-linecap","round");}
+      else{d.setAttribute("fill","none");if(!d.getAttribute("stroke"))d.setAttribute("stroke","rgba(30,20,10,.5)");if(!d.getAttribute("stroke-width"))d.setAttribute("stroke-width","1.2");d.setAttribute("stroke-linecap","round");}
+    });
+    g.addEventListener("click",function(){if(st.view==="game"&&!st.finished)openPart(g.getAttribute("data-part"));});
+    g.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();if(st.view==="game"&&!st.finished)openPart(g.getAttribute("data-part"));}});
+  });
+}
+function paint(part,mat){
+  var g=$("p-"+part);
+  [].forEach.call(g.querySelectorAll(".fill"),function(f){f.setAttribute("fill","url(#m-"+mat+")");f.setAttribute("stroke","rgba(20,14,8,.6)");});
+  g.classList.remove("shine");void g.getBoundingClientRect();g.classList.add("shine");
+}
+function resetStatue(){
+  PARTS.forEach(function(p){var g=$("p-"+p);
+    [].forEach.call(g.querySelectorAll(".fill"),function(f){f.setAttribute("fill","url(#m-plaster)");f.setAttribute("stroke","rgba(40,28,16,.55)");});
+    g.classList.remove("done","sel","shine");g.classList.add("todo");g.style.opacity="";g.style.transform="";
+    if(g.getAnimations) g.getAnimations().forEach(function(a){a.cancel();});
+  });
+  [].forEach.call(document.querySelectorAll(".badge"),function(b){b.classList.remove("show");});
+  var m=$("mountain");m.setAttribute("opacity","0");if(m.getAnimations)m.getAnimations().forEach(function(a){a.cancel();});
+  var fig=$("figure");if(fig.getAnimations)fig.getAnimations().forEach(function(a){a.cancel();});
+  $("finaleText").classList.remove("show");$("skipBtn").classList.add("hidden");
+}
+function setBadge(part,ok2){
+  var b=document.querySelector('.badge[data-b="'+part+'"]');
+  var full=ok2===2,none=ok2===0;
+  b.querySelector("circle").setAttribute("fill",full?"#4f8a3d":none?"#b23a22":"#c98a1c");
+  b.querySelector("circle").setAttribute("stroke","#fff3d0");b.querySelector("circle").setAttribute("stroke-width","2");
+  var tx=b.querySelector("text");tx.setAttribute("fill","#fff");tx.textContent=full?"✓":none?"✗":"½";
+  b.classList.add("show");
+}
+function renderLegend(){
+  var L=$("legend");L.innerHTML="";
+  PARTS.forEach(function(p){var a=st.answers[p];var b=document.createElement("button");b.type="button";b.textContent=t("parts")[p];
+    if(a){b.classList.add("done");if(!(a.matOk&&a.kingOk))b.classList.add("bad");else b.classList.add("ok");}
+    b.addEventListener("click",function(){if(st.view==="game"&&!st.finished)openPart(p);});L.appendChild(b);});
+}
+function updatePrompt(){
+  var left=PARTS.filter(function(p){return !st.answers[p];}).length;
+  $("prompt").textContent=left===6?t("prompt"):left===0?t("promptDone"):left===1?t("promptOne"):fmt(t("promptMore"),{n:left});
+}
+
+/* ---------- flow ---------- */
+function show(view){st.view=view;["start","game","results"].forEach(function(v){$(v).classList.toggle("hidden",v!==view);});window.scrollTo(0,0);}
+function startGame(){
+  st.answers={};st.shuffles={};st.finished=false;st.cur=null;st.result=null;st.elapsed=0;
+  resetStatue();renderLegend();updatePrompt();$("hudScore").textContent="0";$("hudTime").textContent="0:00";$("hudLevel").textContent=t(st.level);
+  show("game");st.t0=Date.now();clearInterval(st.timer);
+  st.timer=setInterval(tick,250);
+}
+function tick(){st.elapsed=(Date.now()-st.t0)/1000;$("hudTime").textContent=mmss(st.elapsed);}
+function stopTimer(){tick();clearInterval(st.timer);st.timer=null;}
+
+function openPart(p){
+  st.cur=p;st.sel={mat:null,king:null,text:""};
+  if(!st.shuffles[p]) st.shuffles[p]=shuffle(KINGS);
+  PARTS.forEach(function(q){$("p-"+q).classList.toggle("sel",q===p);});
+  $("overlay").classList.remove("hidden");renderSheet();
+  var first=$("sheet").querySelector(".sw,.btn");if(first&&first.focus)try{first.focus({preventScroll:true});}catch(e){}
+}
+function closeSheet(){
+  $("overlay").classList.add("hidden");PARTS.forEach(function(q){$("p-"+q).classList.remove("sel");});
+  var p=st.cur;st.cur=null;
+  if(p&&PARTS.every(function(q){return st.answers[q];})&&!st.finished) finish();
+}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+function renderSheet(){
+  var p=st.cur,a=st.answers[p],S=$("sheet"),h="";
+  h+='<h2 id="sheetTitle" class="cinzel"><span>'+esc(t("parts")[p])+'</span><button type="button" class="close" id="xBtn" aria-label="'+esc(t("close"))+'">×</button></h2>';
+  if(!a){
+    h+='<div class="step">'+esc(t("step1"))+'</div><div class="swatches">';
+    MATS.forEach(function(m){h+='<button type="button" class="sw" data-mat="'+m+'" aria-pressed="'+(st.sel.mat===m)+'"><i class="m-'+m+'"></i>'+esc(t("mats")[m])+'</button>';});
+    h+='</div><div class="step">'+esc(t("step2"))+'</div>';
+    if(st.level==="easy"){
+      h+='<div class="kopts">';st.shuffles[p].forEach(function(k){h+='<button type="button" class="kopt" data-king="'+k+'" aria-pressed="'+(st.sel.king===k)+'">'+esc(t("kings")[k])+'</button>';});h+='</div>';
+    }else{
+      h+='<input class="kinput" id="kInput" type="text" autocomplete="off" autocapitalize="words" spellcheck="false" placeholder="'+esc(t("typeHere"))+'" value="'+esc(st.sel.text)+'"><div class="hint">'+esc(t("typeHint"))+'</div>';
+    }
+    h+='<div class="actions"><button type="button" class="btn btn-gold btn-wide" id="submitBtn">'+esc(t("submit"))+'</button></div>';
+  }else{
+    var ck=ANSWER[p],K=t("kings"),M=t("mats");
+    h+='<div class="fb">';
+    h+='<div class="fbrow '+(a.matOk?"ok":"bad")+'"><span class="ic">'+(a.matOk?"✓":"✗")+'</span><div><b>'+esc(a.matOk?t("matOk"):t("matBad"))+'</b><small>'+esc(t("youChose"))+' '+esc(M[a.mat])+(a.matOk?"":' · '+esc(t("correctIs"))+' <b>'+esc(M[ck.mat])+'</b>')+'</small></div></div>';
+    var yours=st.level==="hard"?(t("youTyped")+" “"+a.text+"”"):(t("youChose")+" "+K[a.king]);
+    h+='<div class="fbrow '+(a.kingOk?"ok":"bad")+'"><span class="ic">'+(a.kingOk?"✓":"✗")+'</span><div><b>'+esc(a.kingOk?t("kingOk"):t("kingBad"))+'</b><small>'+(a.kingOk?'<b>'+esc(K[ck.king])+'</b>':esc(yours)+' · '+esc(t("correctIs"))+' <b>'+esc(K[ck.king])+'</b>')+' ('+esc(t("dates")[ck.king])+')</small></div></div>';
+    h+='</div>';
+    var v=t("verses")[p];
+    h+='<div class="verse"><b>📖 '+esc(v[0])+'</b><q>'+esc(v[1].replace(/^“|”$/g,""))+'</q></div>';
+    h+='<div class="pts">'+esc(fmt(t("pts"),{n:a.pts}))+'</div>';
+    var allDone=PARTS.every(function(q){return st.answers[q];});
+    h+='<div class="actions"><button type="button" class="btn btn-gold btn-wide" id="contBtn">'+esc(allDone&&!st.finished?t("seeResult"):t("cont"))+'</button></div>';
+  }
+  S.innerHTML=h;
+  $("xBtn").onclick=closeSheet;
+  if(!a){
+    [].forEach.call(S.querySelectorAll(".sw"),function(b){b.onclick=function(){st.sel.mat=b.getAttribute("data-mat");[].forEach.call(S.querySelectorAll(".sw"),function(x){x.setAttribute("aria-pressed",String(x===b));});validate();};});
+    [].forEach.call(S.querySelectorAll(".kopt"),function(b){b.onclick=function(){st.sel.king=b.getAttribute("data-king");[].forEach.call(S.querySelectorAll(".kopt"),function(x){x.setAttribute("aria-pressed",String(x===b));});validate();};});
+    var inp=$("kInput");if(inp){inp.oninput=function(){st.sel.text=inp.value;validate();};inp.onkeydown=function(e){if(e.key==="Enter"&&!$("submitBtn").disabled)submit();};}
+    $("submitBtn").onclick=submit;validate();
+  }else{$("contBtn").onclick=closeSheet;}
+}
+function validate(){var ok=!!st.sel.mat&&(st.level==="easy"?!!st.sel.king:norm(st.sel.text).length>0);var b=$("submitBtn");if(b)b.disabled=!ok;return ok;}
+function submit(){
+  if(!validate())return;
+  var p=st.cur,ck=ANSWER[p],king=st.level==="easy"?st.sel.king:detectKingdom(st.sel.text);
+  var a={mat:st.sel.mat,king:king,text:st.sel.text.trim(),matOk:st.sel.mat===ck.mat,kingOk:king===ck.king};
+  a.pts=Math.round(((a.matOk?100:0)+(a.kingOk?100:0))*mult());
+  st.answers[p]=a;
+  if(PARTS.every(function(q){return st.answers[q];})) stopTimer();
+  paint(p,a.mat);var g=$("p-"+p);g.classList.remove("todo");g.classList.add("done");
+  setBadge(p,(a.matOk?1:0)+(a.kingOk?1:0));
+  $("hudScore").textContent=baseScore();renderLegend();updatePrompt();renderSheet();
+}
+
+/* ---------- finale ---------- */
+function anim(el,frames,opts){if(el&&el.animate){try{return el.animate(frames,opts);}catch(e){}}return null;}
+function finish(){
+  st.finished=true;stopTimer();st.result=computeResult();
+  var key="d2s_best_"+st.level,prev=parseInt(LS.get(key)||"0",10);
+  st.result.newBest=st.result.total>prev;if(st.result.newBest)LS.set(key,String(st.result.total));
+  st.result.best=Math.max(prev,st.result.total);
+  PARTS.forEach(function(p){$("p-"+p).classList.remove("todo","shine");});
+  var canAnimate=!!document.body.animate&&!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  if(!canAnimate){showResults();return;}
+  var ft=$("finaleText"),skip=$("skipBtn"),timers=[],done=false;
+  function end(){if(done)return;done=true;timers.forEach(clearTimeout);showResults();}
+  skip.classList.remove("hidden");skip.onclick=end;
+  [].forEach.call(document.querySelectorAll(".badge"),function(b){b.classList.remove("show");});
+  function later(fn,ms){timers.push(setTimeout(fn,ms));}
+  ft.textContent=t("f1");ft.classList.add("show");
+  var stone=$("p-stone");
+  // stone: rise, then strike the feet (feet ≈ 165,548 ; stone centre ≈ 303,82)
+  later(function(){
+    anim(stone,[{transform:"translate(0,0) rotate(0deg)"},{transform:"translate(10px,-30px) rotate(-20deg)",offset:.3},{transform:"translate(-138px,462px) rotate(200deg)"}],{duration:1100,easing:"cubic-bezier(.5,0,.9,.5)",fill:"forwards"});
+  },700);
+  later(function(){
+    ft.textContent=t("f2");
+    anim($("figure"),[{transform:"translateX(0)"},{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"translateX(-4px)"},{transform:"translateX(0)"}],{duration:350});
+    var order=["feet","legs","belly","chest","head"];
+    order.forEach(function(p,i){
+      var g=$("p-"+p),dx=(Math.random()*160-80),rot=(Math.random()*120-60);
+      anim(g,[{transform:"translate(0,0) rotate(0deg)",opacity:1},{transform:"translate("+dx+"px,"+(260+i*40)+"px) rotate("+rot+"deg)",opacity:0}],{duration:1300,delay:150+i*160,easing:"cubic-bezier(.55,0,1,.45)",fill:"forwards"});
+    });
+  },1850);
+  later(function(){
+    ft.textContent=t("f3");
+    var m=$("mountain");m.setAttribute("opacity","1");
+    anim(m,[{transform:"scale(.15,0)",opacity:0},{transform:"scale(1,1)",opacity:1}],{duration:1600,easing:"cubic-bezier(.2,.8,.2,1)",fill:"forwards"});
+    anim(stone,[{transform:"translate(-138px,462px) rotate(200deg) scale(1)",opacity:1},{transform:"translate(-90px,230px) rotate(200deg) scale(2.2)",opacity:0}],{duration:1400,fill:"forwards"});
+  },3500);
+  later(end,6200);
+}
+function showResults(){$("skipBtn").classList.add("hidden");show("results");renderResults();}
+function renderResults(){
+  var r=st.result;if(!r)return;
+  $("resTitle").textContent=t(["res0","res1","res2","res3"][r.stars]);
+  var s="";for(var i=0;i<3;i++)s+=i<r.stars?"★":'<span class="off">★</span>';$("resStars").innerHTML=s;
+  $("resScore").textContent=r.total;$("resCorrect").textContent=r.correct+"/12";$("resTime").textContent=mmss(r.time);$("resBonus").textContent="+"+r.bonus;
+  $("resBest").innerHTML=(r.newBest?'<span class="newbest">'+esc(t("newBest"))+'</span><br>':"")+'<small style="color:#6b5330">'+esc(fmt(t("best"),{lvl:t(st.level),n:r.best}))+'</small>';
+  var K=t("kings"),M=t("mats"),h='<tr><th>'+esc(t("thPart"))+'</th><th>'+esc(t("thYou"))+'</th><th>'+esc(t("thRight"))+'</th></tr>';
+  PARTS.forEach(function(p){var a=st.answers[p],c=ANSWER[p];if(!a)return;
+    var yk=st.level==="hard"?("“"+a.text+"”"):K[a.king];
+    h+='<tr><td><b>'+esc(t("parts")[p])+'</b></td><td><span class="'+(a.matOk?"v":"x")+'">'+(a.matOk?"✓ ":"✗ ")+esc(M[a.mat])+'</span><br><span class="'+(a.kingOk?"v":"x")+'">'+(a.kingOk?"✓ ":"✗ ")+esc(yk)+'</span></td><td>'+esc(M[c.mat])+'<br>'+esc(K[c.king])+'</td></tr>';});
+  $("breakdown").innerHTML=h;
+}
+
+/* ---------- wiring ---------- */
+[].forEach.call(document.querySelectorAll(".lang button"),function(b){b.addEventListener("click",function(){st.lang=b.getAttribute("data-lang");LS.set("d2s_lang",st.lang);applyLang();});});
+[].forEach.call(document.querySelectorAll(".level"),function(b){b.addEventListener("click",function(){st.level=b.getAttribute("data-level");LS.set("d2s_level",st.level);[].forEach.call(document.querySelectorAll(".level"),function(x){x.setAttribute("aria-pressed",String(x===b));});renderBestLine();});});
+document.querySelector('.level[data-level="'+st.level+'"]').click();
+$("startBtn").addEventListener("click",startGame);
+$("againBtn").addEventListener("click",startGame);
+$("levelBtn").addEventListener("click",function(){resetStatue();renderBestLine();show("start");});
+$("overlay").addEventListener("click",function(e){if(e.target===$("overlay"))closeSheet();});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!$("overlay").classList.contains("hidden"))closeSheet();});
+setupStatue();applyLang();
+window.__d2={st:st,detectKingdom:detectKingdom,computeResult:computeResult,ANSWER:ANSWER};
+})();
+</script>
+</body>
+</html>
