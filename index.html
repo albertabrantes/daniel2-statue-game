@@ -296,6 +296,7 @@ footer{text-align:center;color:#a8946a;padding-left:max(10px,env(safe-area-inset
         <path class="fill" d="M202 396h-28l2 52q1 30 2 70h21q6-30 5-62z"/>
         <path class="det" d="M136 446q7 4 13 0M194 446q-7 4-13 0M133 470q3 20 2 40M197 470q-3 20-2 40M150 410q2 40-2 100M180 410q-2 40 2 100"/>
         <path class="det" d="M131 500h22M177 500h22" stroke-dasharray="2 2"/>
+        <rect class="hit" x="150" y="400" width="30" height="114" fill="transparent"/>
       </g>
       <!-- FEET -->
       <g id="p-feet" class="part" data-part="feet" tabindex="0" role="button">
@@ -307,6 +308,7 @@ footer{text-align:center;color:#a8946a;padding-left:max(10px,env(safe-area-inset
         </g>
         <path class="det" d="M133 524q8 3 18 0M177 524q10 3 20 0M138 545q-6 10-16 16M192 545q6 10 16 16"/>
         <path class="det" d="M126 538l6 4M200 538l-6 4M140 560l4 6M190 560l-4 6" opacity=".6"/>
+        <rect class="hit" x="150" y="514" width="30" height="58" fill="transparent"/>
       </g>
       <!-- BELLY & THIGHS -->
       <g id="p-belly" class="part" data-part="belly" tabindex="0" role="button">
@@ -830,7 +832,7 @@ setupStatue();applyLang();
 if(/[?&]debug=1/.test(location.search))window.__d2={st:st,startReveal:startReveal,detectKingdom:detectKingdom,computeResult:computeResult,ANSWER:ANSWER};
 })();
 </script>
-<script>(function(){var URL="https://bible-study-game-production.up.railway.app/",ST="display:block;margin:10px auto;max-width:100%;box-sizing:border-box;background:#1b130c;color:#f6dc8c;border:1px solid #e3b54a;border-radius:999px;font:600 14px Georgia,serif;padding:10px 14px;text-decoration:none;box-shadow:0 4px 18px rgba(0,0,0,.5);text-align:center";function t(){var en=(document.documentElement.lang||"").indexOf("en")===0;return en?"🌐 New online version: leaderboard + multiplayer ›":"🌐 Nova versão online: ranking + multijogador ›";}
+<script>(function(){var URL="https://bible-study-game-production.up.railway.app/daniel2/",ST="display:block;margin:10px auto;max-width:100%;box-sizing:border-box;background:#1b130c;color:#f6dc8c;border:1px solid #e3b54a;border-radius:999px;font:600 14px Georgia,serif;padding:10px 14px;text-decoration:none;box-shadow:0 4px 18px rgba(0,0,0,.5);text-align:center";function t(){var en=(document.documentElement.lang||"").indexOf("en")===0;return en?"🌐 New online version: leaderboard + multiplayer ›":"🌐 Nova versão online: ranking + multijogador ›";}
 var els=[];["#start", "#results"].forEach(function(sel){var c=document.querySelector(sel);if(!c)return;var a=document.createElement("a");a.className="d2online";a.href=URL;a.style.cssText=ST;a.textContent=t();c.insertBefore(a,c.firstChild);els.push(a);});
 new MutationObserver(function(){els.forEach(function(a){a.textContent=t();});}).observe(document.documentElement,{attributes:true,attributeFilter:["lang"]});})();</script>
 </body>
